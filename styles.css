@@ -7,27 +7,62 @@
 :root {
     font-family: "Trebuchet MS", sans-serif;
     --main-bg-color: #161616;
-    --main-fg-color: #e3e3e3;
+    --main-fg-color: #e0e0e0;
 }
 
 body {
     background-color: var(--main-bg-color);
 }
 
-header, main {
+header, .character-selection, .character-details {
     max-width: 1200px;
     margin: 0 auto;
+}
+
+header {
+    margin: 25px auto 50px;
+}
+
+
+
+/*  CHARACTER SELECTION SECTION  */
+.character-selection {
+    border: none     /* NOTE: this is just here so there's something in the selector. There will be more here later. */
+}
+
+.character-option {
+    margin: 25px auto;
+    padding: 15px 0;
+    width: 400px;
+    background-color: #282828;
+
+    text-align: center;
+}
+
+
+
+/*  CHARACTER DETAILS SECTION  */
+.character-details {
+    display: none;
+}
+
+.inventory-item {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.inventory-item:nth-of-type(odd) {
+    background-color: #282828;
 }
 
 
 
 /*  FONT STUFF  */
 
-h1, h2, h3, p {
+h1, h2, h3, h4, h5, h6, p {
     color: var(--main-fg-color);
-    letter-spacing: 0.9px;
 }
-
 
 h1 {
     font-size: 64px;
@@ -40,6 +75,23 @@ h2 {
     font-weight: 700;
 }
 
+h3 {
+    text-align: center;
+}
+
+h4 {
+    font-family: 'Pirata One';
+    font-size: 32px;
+}
+
+h5 {
+    font-size: 12px;
+}
+
+h6 {
+    margin: 15px 0 10px;
+    font-size: 18px;
+}
 
 
 
