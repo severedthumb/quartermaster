@@ -1,0 +1,46 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    font-family: "Trebuchet MS", sans-serif;
+    --main-bg-color: #161616;
+    --main-fg-color: #e3e3e3;
+}
+
+body {
+    background-color: var(--main-bg-color);
+}
+
+header, main {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+
+
+/*  FONT STUFF  */
+
+h1, h2, h3, p {
+    color: var(--main-fg-color);
+    letter-spacing: 0.9px;
+}
+
+
+h1 {
+    font-size: 64px;
+    font-weight: 700;
+    font-family: 'Pirata One';
+}
+
+h2 {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+
+
+
+/*  MEDIA QUERIES WILL GO BELOW THIS  */
