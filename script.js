@@ -19,9 +19,7 @@ fetch('/api/characters')
             const characterId = character.id;
 
             button.addEventListener('click', async () => {
-                console.log('clicked character');
                 const res = await fetch(`/api/inventory?character_id=${characterId}`);
-                console.log('http status: ', res.staus);
                 const items = await res.json();
 
                 fillCharacterDetails(character);
@@ -58,13 +56,3 @@ function renderInventory(items) {
 
     })
 }
-
-
-/*
-
-    <div class='inventory-item'>
-        <p>another item</p>
-        <button class='button-sell-item'>sell for 8 gp</button>
-    </div>
-
-*/

@@ -14,7 +14,7 @@ body {
     background-color: var(--main-bg-color);
 }
 
-header, .character-selection, .character-details {
+header, main {
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -22,46 +22,6 @@ header, .character-selection, .character-details {
 header {
     margin: 25px auto 50px;
 }
-
-
-
-/*  CHARACTER SELECTION SECTION  */
-/*
-.character-selection {
-}
-*/
-
-.character-option {
-    margin: 25px auto;
-    padding: 15px 0;
-    width: 400px;
-    background-color: #282828;
-
-    text-align: center;
-}
-
-
-
-/*  CHARACTER DETAILS SECTION  */
-.character-details {
-    display: none;
-}
-
-.details-container {
-    display: flex;
-    justify-content: space-between;
-}
-
-/*
-.details-nc {
-}
-*/
-
-.details-coins {
-    display: flex;
-    align-items: flex-end;
-}
-
 
 
 
@@ -97,21 +57,9 @@ h2 {
 }
 
 h3 {
-    text-align: center;
-}
-
-h4 {
-    font-family: 'Pirata One';
-    font-size: 32px;
-}
-
-h5 {
-    font-size: 12px;
-}
-
-h6 {
-    margin: 15px 0 10px;
-    font-size: 18px;
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 700;
 }
 
 

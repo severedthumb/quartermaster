@@ -5,9 +5,7 @@ const db = require('./db');
 
 const server = http.createServer((req, res) => {
 
-
-    // SERVE HTML
-    if (req.url === '/') {
+    if (req.url === '/') {                                                  // SERVE HUB HTML
         fs.readFile('index.html', (err, data) => {
             if (err) {
                 res.writeHead(500);
@@ -19,9 +17,7 @@ const server = http.createServer((req, res) => {
             res.end(data);
         });
 
-
-    // SERVE CSS
-    } else if (req.url === '/styles.css') {
+    } else if (req.url === '/styles.css') {                                 // SERVE HUB CSS
         fs.readFile('styles.css', (err, data) => {
             if (err) {
                 res.writeHead(500);
@@ -33,9 +29,7 @@ const server = http.createServer((req, res) => {
             res.end(data);
         });
 
-
-    // SERVE JAVASCRIPT
-    } else if (req.url === '/script.js') {
+    } else if (req.url === '/script.js') {                                  // SERVE HUB JS
         fs.readFile('script.js', (err, data) => {
             if (err) {
                 res.writeHead(500);
@@ -46,22 +40,56 @@ const server = http.createServer((req, res) => {
             res.writeHead(200, { 'Content-Type': 'application/javascript' });
             res.end(data);
         });
+    
+    } else if (req.url === '/shops/generalgoodes/index.html') {             // SERVE GENERAL GOODE'S HTML
+        fs.readFile('shops/generalgoodes/index.html', (err, data) => {
+            if (err) {
+                res.writeHead(500);
+                res.end('Server error');
+                return;
+            }
 
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(data);
+        });
 
-    // SERVE DATA (TEMPORARY)
-    } else if (req.url === '/api/characters') {
+    } else if (req.url === '/shops/generalgoodes/styles.css') {             // SERVE GENERAL GOODE' CSS
+        fs.readFile('shops/generalgoodes/styles.css', (err, data) => {
+            if (err) {
+                res.writeHead(500);
+                res.end('Server error');
+                return;
+            }
+
+            res.writeHead(200, { 'Content-Type': 'text/css' });
+            res.end(data);
+        });
+
+    } else if (req.url === '/shops/generalgoodes/script.js') {              // SERVE GENERAL GOODE'S JS
+        fs.readFile('shops/generalgoodes/script.js', (err, data) => {
+            if (err) {
+                res.writeHead(500);
+                res.end('Server error');
+                return;
+            }
+
+            res.writeHead(200, { 'Content-Type': 'application/javascript' });
+            res.end(data);
+        });
+
+    } else if (req.url === '/api/characters') {                             // API CHARACTERS
         const rows = db.prepare('SELECT name, gold, id FROM characters').all();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(rows));
         return;
 
-    } else if (req.url === '/api/items') {
+    } else if (req.url === '/api/items') {                                  // API ITEMS
         const rows = db.prepare('SELECT name, price FROM items').all();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(rows));
         return;
 
-    } else if (req.url.startsWith('/api/inventory')) {
+    } else if (req.url.startsWith('/api/inventory')) {                      // API INVENTORY
 
         const parsedUrl = new URL(req.url, `http://${req.headers.host}`);     // FIX THIS LINE
         const characterId = parsedUrl.searchParams.get('character_id');
