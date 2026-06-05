@@ -52,14 +52,10 @@ header {
     justify-content: space-between;
 }
 
-/*
-.details-nc {
-}
-*/
-
 .details-coins {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    color: var(--main-fg-color);
 }
 
 

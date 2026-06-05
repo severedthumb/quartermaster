@@ -3,6 +3,8 @@ const url = require('url');
 const fs = require('fs');
 const db = require('./db');
 
+
+
 const server = http.createServer((req, res) => {
 
     if (req.url === '/') {                                                  // SERVE HUB HTML
@@ -78,13 +80,13 @@ const server = http.createServer((req, res) => {
         });
 
     } else if (req.url === '/api/characters') {                             // API CHARACTERS
-        const rows = db.prepare('SELECT name, gold, id FROM characters').all();
+        const rows = db.prepare('SELECT id, first_name, last_name, race, class, level, money FROM characters').all();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(rows));
         return;
 
     } else if (req.url === '/api/items') {                                  // API ITEMS
-        const rows = db.prepare('SELECT name, price FROM items').all();
+        const rows = db.prepare('SELECT name, price, description FROM items').all();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(rows));
         return;
@@ -118,11 +120,6 @@ const server = http.createServer((req, res) => {
 
     }
 });
-
-
-
-
-
 
 
 

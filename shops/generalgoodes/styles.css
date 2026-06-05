@@ -25,20 +25,6 @@ header {
 
 
 
-/*  INVENTORY SECTION  */
-
-.inventory-item {
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.inventory-item:nth-of-type(odd) {
-    background-color: #282828;
-}
-
-
-
 /*  FONT STUFF  */
 
 h1, h2, h3, h4, h5, h6, p {
@@ -65,3 +51,66 @@ h3 {
 
 
 /*  MEDIA QUERIES WILL GO BELOW THIS  */
+
+
+
+
+
+
+/* ---------- ITEMS ---------- */
+
+.inventory-item {
+    cursor: pointer;
+}
+
+.inventory-item:nth-of-type(odd) {
+    background-color: #444;
+}
+
+.item-main {
+    padding: 10px 15px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    color: var(--main-fg-color);
+}
+
+.caret {
+    margin: 0 10px 0 0;
+    transition: transform 0.2s ease;
+}
+
+.caret.open {
+    transform: rotate(90deg);
+}
+
+.item-name {
+    margin-right: auto;
+}
+
+.item-price {
+    margin-right: 25px;
+}
+
+.item-description {
+    padding: 10px 15px;
+    background-color: var(--main-fg-color);
+}
+
+.item-description p {
+    margin: 0;
+    color: var(--main-bg-color);
+}
+
+.item-button {
+    padding: 3px 0;
+    width: 70px;
+    border: none;
+    background-color: plum;
+}
+
+
+.hidden {
+    display: none;
+}

@@ -3,6 +3,7 @@ const characterSelection = document.querySelector('.character-selection');
 const characterDetails = document.querySelector('.character-details');
 const characterName = document.querySelector('.character-name');
 const characterClass = document.querySelector('.character-class');
+const detailsCoins = document.querySelector('.details-coins');
 
 const inventory = document.querySelector('.inventory');
 
@@ -13,7 +14,7 @@ fetch('/api/characters')
             const button = document.createElement('div');
             button.classList.add('character-option');
             const buttonText = document.createElement('p');
-            buttonText.textContent = character.name;
+            buttonText.textContent = character.first_name;
             button.appendChild(buttonText);
 
             const characterId = character.id;
@@ -37,10 +38,23 @@ fetch('/api/characters')
 
 // FUNCTIONS
 
+function formatMoney(money) {
+    const gp = Math.floor(money / 100);
+    money %= 100;
+
+    const sp = Math.floor(money / 10);
+    money %= 10;
+
+    const cp = money;
+
+    return `${gp} gp, ${sp} sp, ${cp} cp`;
+};
+
 function fillCharacterDetails(character) {
-    characterName.textContent = character.name;
-    characterClass.textContent = 'placeholder text for race and class';
-}
+    characterName.textContent = character.first_name;
+    characterClass.textContent = `${character.race} ${character.class}, level ${character.level}`;
+    detailsCoins.textContent = formatMoney(character.money);
+};
 
 function renderInventory(items) {
     items.forEach(item => {
@@ -55,4 +69,4 @@ function renderInventory(items) {
         inventory.appendChild(div);
 
     })
-}
+};
