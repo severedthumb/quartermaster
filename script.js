@@ -1,3 +1,5 @@
+// THIS IS THE "HUB PAGE" JS
+
 const characterSelection = document.querySelector('.character-selection');
 
 const characterDetails = document.querySelector('.character-details');
@@ -7,6 +9,10 @@ const detailsCoins = document.querySelector('.details-coins');
 
 const inventory = document.querySelector('.inventory');
 
+const linkGeneralGoodes = document.getElementById('link-general-goodes');
+
+
+// CREATE CHARACTER SELECTION BUTTONS
 fetch('/api/characters')
     .then(res => res.json())
     .then(characters => {
@@ -36,27 +42,28 @@ fetch('/api/characters')
 
 
 
-// FUNCTIONS
+// FUNCTIONS - THESE ARE BOTH CALLED WHEN A CHARACTER IS SELECTED
 
-function formatMoney(money) {
-    const gp = Math.floor(money / 100);
-    money %= 100;
-
-    const sp = Math.floor(money / 10);
-    money %= 10;
-
-    const cp = money;
-
-    return `${gp} gp, ${sp} sp, ${cp} cp`;
-};
 
 function fillCharacterDetails(character) {
     characterName.textContent = character.first_name;
     characterClass.textContent = `${character.race} ${character.class}, level ${character.level}`;
     detailsCoins.textContent = formatMoney(character.money);
+    linkGeneralGoodes.href = `/shops/generalgoodes/index.html?character_id=${character.id}`;
 };
 
 function renderInventory(items) {
+
+    if (items.length === 0) {
+        const div = document.createElement('div');
+        div.classList.add('inventory-item');
+        const p = document.createElement('p');
+        p.textContent = "this guy ain't got nothin' in his inventory";
+        div.appendChild(p);
+        inventory.appendChild(div);
+        return;
+    }
+
     items.forEach(item => {
         const div = document.createElement('div');
         div.classList.add('inventory-item');
@@ -69,4 +76,22 @@ function renderInventory(items) {
         inventory.appendChild(div);
 
     })
+};
+
+
+
+
+
+
+// HELPER FUNCTION
+function formatMoney(money) {
+    const gp = Math.floor(money / 100);
+    money %= 100;
+
+    const sp = Math.floor(money / 10);
+    money %= 10;
+
+    const cp = money;
+
+    return `${gp} gp, ${sp} sp, ${cp} cp`;
 };

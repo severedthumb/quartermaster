@@ -1,4 +1,28 @@
+// THIS IS THE "GENERAL GOODE'S" PAGE JS
+
+let character;
+
+const userMessage = document.querySelector('.user-message');
 const inventory = document.querySelector('.inventory');
+
+
+
+async function loadCharacter() {
+    const params = new URLSearchParams(window.location.search);
+    const characterId = params.get('character_id');
+
+    const res = await fetch(`/api/characters?character_id=${characterId}`);
+    const characters = await res.json();
+    character = characters[0]; // NOTE: This is because the API still returns an array even if it's just one character.
+
+    userMessage.textContent = `You are logged in as ${character.first_name}. You have ${formatPrice(character.money)} to spend.`;
+
+}
+
+loadCharacter();
+
+
+
 
 fetch('/api/items')
     .then(res => res.json())
@@ -34,9 +58,20 @@ function createItem(item) {
     const itemBuyButton = document.createElement('button');
     itemBuyButton.classList.add('item-button');
     itemBuyButton.innerText = 'buy';
-    itemBuyButton.addEventListener('click', (event) => {
+    itemBuyButton.addEventListener('click', async (event) => {
         event.stopPropagation();
-        alert('Item bought');
+        
+        const res = await fetch('/api/purchase', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                character_id: character.id,
+                item_id: item.id
+            })
+        })
+
+        const result = await res.json();
+        console.log(result);
     });
     itemMain.append(itemBuyButton);
 
@@ -75,21 +110,3 @@ function formatPrice(price) {
 
     return parts.join(' ');
 }
-
-
-
-/*
-                <div class='inventory-item' id='test'>
-                    <div class='item-main'>
-                        <span class='caret' id='test-caret'>▶</span>
-                        <span class='item-name'>Potion of Example</span>
-                        <span class='item-price'>300 gp</span>
-                        <button class='item-button'>add</button>
-                    </div>
-
-                    <div class='item-description hidden' id='test-desc'>
-                        <p>Here is some text.</p>
-                    </div>
-                </div>
-
-*/

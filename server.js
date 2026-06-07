@@ -43,7 +43,7 @@ const server = http.createServer((req, res) => {
             res.end(data);
         });
     
-    } else if (req.url === '/shops/generalgoodes/index.html') {             // SERVE GENERAL GOODE'S HTML
+    } else if (req.url.startsWith('/shops/generalgoodes/index.html')) {     // SERVE GENERAL GOODE'S HTML
         fs.readFile('shops/generalgoodes/index.html', (err, data) => {
             if (err) {
                 res.writeHead(500);
@@ -79,14 +79,30 @@ const server = http.createServer((req, res) => {
             res.end(data);
         });
 
-    } else if (req.url === '/api/characters') {                             // API CHARACTERS
-        const rows = db.prepare('SELECT id, first_name, last_name, race, class, level, money FROM characters').all();
+    } else if (req.url.startsWith('/api/characters')) {                     // API CHARACTERS
+
+        const parsedUrl = new URL(req.url, `http://${req.headers.host}`);       // FIX THIS LINE
+        const characterId = parsedUrl.searchParams.get('character_id');
+
+        if (!characterId) {
+            const rows = db.prepare('SELECT id, first_name, last_name, race, class, level, money FROM characters').all();
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(rows));
+            return;
+        }
+
+        const rows = db.prepare(`
+            SELECT id, first_name, last_name, race, class, level, money
+            FROM characters
+            WHERE id = ?    
+        `).all(characterId);
+
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(rows));
         return;
 
     } else if (req.url === '/api/items') {                                  // API ITEMS
-        const rows = db.prepare('SELECT name, price, description FROM items').all();
+        const rows = db.prepare('SELECT id, name, price, description FROM items').all();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(rows));
         return;
@@ -118,6 +134,63 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify(rows));
         return;
 
+    } else if (req.url === '/api/purchase' && req.method === 'POST') {      // API PURCHASE (FOR 'POST' REQUESTS!)
+
+        let body = '';
+
+        req.on('data', chunk => {
+            body += chunk;
+        });
+
+        req.on('end', () => {
+            const purchase = JSON.parse(body);
+
+            // look up the character
+            const character = db.prepare(`
+                SELECT *
+                FROM characters
+                WHERE id = ?
+            `).get(purchase.character_id);
+
+            // look up the item
+            const item = db.prepare(`
+                SELECT *
+                FROM items
+                WHERE id = ?
+            `).get(purchase.item_id);
+
+            // make sure character can afford the item
+            if (character.money < item.price) {
+                console.log('Not enough money.');
+
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({
+                    success: false,
+                    message: 'Not enough money.'
+                }));
+
+                return;
+            };
+
+            // actually make the purchase
+            const newMoney = character.money - item.price;
+
+            db.prepare(`
+                UPDATE characters
+                SET money = ?
+                WHERE id = ?
+            `).run(newMoney, character.id);
+
+            console.log(`${character.first_name} now has ${newMoney}.`);
+
+            // send result back to shop page
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                succes: true
+            }));
+        });
+
+        return;
     }
 });
 
