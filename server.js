@@ -181,7 +181,33 @@ const server = http.createServer((req, res) => {
                 WHERE id = ?
             `).run(newMoney, character.id);
 
-            console.log(`${character.first_name} now has ${newMoney}.`);
+            // check if other items of same ID are already in the character's inventory; if so, increment; if not, create row
+            const inventoryRow = db.prepare(`
+                SELECT quantity
+                FROM inventory
+                WHERE character_id = ?
+                AND item_id = ?
+            `).get(character.id, item.id);
+
+            if (inventoryRow) {
+                db.prepare(`
+                    UPDATE inventory
+                    SET quantity = quantity + 1
+                    WHERE character_id = ?
+                    AND item_id = ?
+                `).run(character.id, item.id);
+            } else {
+                db.prepare(`
+                    INSERT INTO inventory (
+                        character_id,
+                        item_id,
+                        quantity                    
+                    )
+                    VALUES (?, ?, 1)
+                `).run(character.id, item.id);
+            }
+
+
 
             // send result back to shop page
             res.writeHead(200, { 'Content-Type': 'application/json' });

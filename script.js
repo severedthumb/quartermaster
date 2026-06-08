@@ -44,7 +44,6 @@ fetch('/api/characters')
 
 // FUNCTIONS - THESE ARE BOTH CALLED WHEN A CHARACTER IS SELECTED
 
-
 function fillCharacterDetails(character) {
     characterName.textContent = character.first_name;
     characterClass.textContent = `${character.race} ${character.class}, level ${character.level}`;
@@ -67,12 +66,22 @@ function renderInventory(items) {
     items.forEach(item => {
         const div = document.createElement('div');
         div.classList.add('inventory-item');
-        const p = document.createElement('p');
-        p.textContent = item.name;
-        const button = document.createElement('button');
-        button.textContent = `sell for ${item.price} gp`;
-        div.appendChild(p);
-        div.appendChild(button);
+
+        const itemName = document.createElement('p');
+        itemName.classList.add('item-name');
+        itemName.textContent = item.name;
+
+        const itemQuantity = document.createElement('p');
+        itemQuantity.classList.add('item-quantity');
+        itemQuantity.textContent = `quantity: ${item.quantity}`;
+
+        const itemButton = document.createElement('button');
+        itemButton.classList.add('item-button');
+        itemButton.textContent = `sell for ${formatPrice(item.price)}`;
+
+        div.appendChild(itemName);
+        div.appendChild(itemQuantity);
+        div.appendChild(itemButton);
         inventory.appendChild(div);
 
     })
@@ -80,10 +89,8 @@ function renderInventory(items) {
 
 
 
-
-
-
 // HELPER FUNCTION
+// for displaying player money total, which includes 0s (e.g., 10 gp, 0 sp, 0 cp)
 function formatMoney(money) {
     const gp = Math.floor(money / 100);
     money %= 100;
@@ -95,3 +102,22 @@ function formatMoney(money) {
 
     return `${gp} gp, ${sp} sp, ${cp} cp`;
 };
+
+// for displaying item prices, which does NOT include 0s (e.g., 5 sp)
+function formatPrice(price) {
+    const gp = Math.floor(price / 100);
+    price %= 100;
+
+    const sp = Math.floor(price / 10);
+    price %= 10;
+
+    const cp = price;
+
+    const parts = [];
+
+    if (gp > 0) parts.push(`${gp} gp`);
+    if (sp > 0) parts.push(`${sp} sp`);
+    if (cp > 0) parts.push(`${cp} cp`);
+
+    return parts.join(' ');
+}
