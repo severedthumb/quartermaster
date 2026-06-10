@@ -111,6 +111,32 @@ h3 {
 }
 
 
+
+.toast {
+    padding: 40px 50px;
+    background-color: plum;
+
+    position: fixed;
+
+    bottom: 10%;
+    left: 50%;
+    transform: translate(-50%);
+
+    opacity: 0;
+    transition: opacity 0.3s;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    pointer-events: none;
+}
+
+.toast.visible {
+    opacity: 1;
+}
+
+
 .hidden {
     display: none;
 }

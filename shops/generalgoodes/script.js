@@ -15,7 +15,7 @@ async function loadCharacter() {
     const characters = await res.json();
     character = characters[0]; // NOTE: This is because the API still returns an array even if it's just one character.
 
-    userMessage.textContent = `You are logged in as ${character.first_name}. You have ${formatPrice(character.money)} to spend.`;
+    userMessage.textContent = `You are logged in as ${character.first_name}. You have ${formatMoney(character.money)} to spend.`;
 
 }
 
@@ -71,7 +71,12 @@ function createItem(item) {
         })
 
         const result = await res.json();
-        console.log(result);
+        
+        if (result.success) {
+            showToast(`Purchased ${item.name} for ${formatPrice(item.price)}.`);
+        } else {
+            showToast(result.message);
+        }
     });
     itemMain.append(itemBuyButton);
 
@@ -93,6 +98,35 @@ function createItem(item) {
 };
 
 
+
+// TOAST NOTIFICATION
+const toast = document.querySelector('.toast');
+
+function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add('visible');
+
+    setTimeout(() => {
+        toast.classList.remove('visible');
+    }, 3000);
+}
+
+
+// MONEY FORMATTING FUNCTIONS
+// for displaying player money total, which includes 0s (e.g., 10 gp, 0 sp, 0 cp)
+function formatMoney(money) {
+    const gp = Math.floor(money / 100);
+    money %= 100;
+
+    const sp = Math.floor(money / 10);
+    money %= 10;
+
+    const cp = money;
+
+    return `${gp} gp, ${sp} sp, ${cp} cp`;
+};
+
+// for displaying item prices, which does NOT include 0s (e.g., 5 sp)
 function formatPrice(price) {
     const gp = Math.floor(price / 100);
     price %= 100;
