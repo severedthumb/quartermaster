@@ -23,12 +23,21 @@ header, main {
 
 header {
     margin: 25px auto 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.home-link {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
 }
 
 .user-message {
     margin-top: 25px;
     text-align: center;
-    color: plum;
+
 }
 
 
@@ -54,6 +63,10 @@ h3 {
     margin-bottom: 12px;
     font-size: 16px;
     font-weight: 700;
+}
+
+a {
+    all: unset;
 }
 
 /* ---------- ITEMS ---------- */
@@ -111,7 +124,7 @@ h3 {
 }
 
 
-
+/* TOAST STUFF  */
 .toast {
     padding: 40px 50px;
     background-color: plum;
@@ -135,6 +148,8 @@ h3 {
 .toast.visible {
     opacity: 1;
 }
+
+
 
 
 .hidden {

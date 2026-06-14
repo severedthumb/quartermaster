@@ -79,6 +79,18 @@ const server = http.createServer((req, res) => {
             res.end(data);
         });
 
+    } else if (req.url === '/shops/generalgoodes/home_logo.svg') {          // SERVER HOME LOGO
+        fs.readFile('shops/generalgoodes/home_logo.svg', (err, data) => {
+            if (err) {
+                res.writeHead(500);
+                res.end('Server error');
+                return;
+            }
+
+            res.writeHead(200, { 'Content-Type': 'image/svg+xml' });
+            res.end(data);
+        });
+
     } else if (req.url.startsWith('/api/characters')) {                     // API CHARACTERS
 
         const parsedUrl = new URL(req.url, `http://${req.headers.host}`);       // FIX THIS LINE
@@ -121,6 +133,7 @@ const server = http.createServer((req, res) => {
 
         const rows = db.prepare(`
             SELECT
+                items.id,
                 items.name,
                 items.price,
                 items.description,
@@ -208,6 +221,80 @@ const server = http.createServer((req, res) => {
             }
 
 
+
+            // send result back to shop page
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                success: true
+            }));
+        });
+
+        return;
+
+    } else if (req.url === '/api/sell' && req.method === 'POST') {
+
+        let body = '';
+
+        req.on('data', chunk => {
+            body += chunk;
+        });
+
+        req.on('end', () => {
+            const sale = JSON.parse(body);
+
+            // look up the character
+            const character = db.prepare(`
+                SELECT *
+                FROM characters
+                WHERE id = ?
+            `).get(sale.character_id);
+
+            // look up the item
+            const item = db.prepare(`
+                SELECT *
+                FROM items
+                WHERE id = ?
+            `).get(sale.item_id);
+
+            // actually make the sale
+            const newMoney = character.money + item.price;
+
+            const row = db.prepare(`
+                SELECT quantity
+                FROM inventory
+                WHERE character_id = ?
+                AND item_id = ?
+            `).get(sale.character_id, sale.item_id);
+
+            if (!row) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({
+                    success: false,
+                    message: 'Item not found in inventory.'
+                }));
+                return;
+            }
+
+            if (row.quantity > 1) {
+                db.prepare(`
+                    UPDATE inventory
+                    SET quantity = quantity - 1
+                    WHERE character_id = ?
+                    AND item_id = ?
+                `).run(sale.character_id, sale.item_id);
+            } else {
+                db.prepare(`
+                    DELETE FROM inventory
+                    WHERE character_id = ?
+                    AND item_id = ?
+                `).run(sale.character_id, sale.item_id);
+            }
+
+            db.prepare(`
+                UPDATE characters
+                SET money = ?
+                WHERE id = ?
+            `).run(newMoney, character.id);
 
             // send result back to shop page
             res.writeHead(200, { 'Content-Type': 'application/json' });

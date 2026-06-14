@@ -30,7 +30,7 @@ fetch('/api/characters')
                 const items = await res.json();
 
                 fillCharacterDetails(character);
-                renderInventory(items);
+                renderInventory(character, items);
 
                 characterSelection.style.display = 'none';
                 characterDetails.style.display = 'block';
@@ -51,7 +51,7 @@ function fillCharacterDetails(character) {
     linkGeneralGoodes.href = `/shops/generalgoodes/index.html?character_id=${character.id}`;
 };
 
-function renderInventory(items) {
+function renderInventory(character, items) {
 
     if (items.length === 0) {
         const div = document.createElement('div');
@@ -78,6 +78,28 @@ function renderInventory(items) {
         const itemButton = document.createElement('button');
         itemButton.classList.add('item-button');
         itemButton.textContent = `sell for ${formatPrice(item.price)}`;
+        itemButton.addEventListener('click', async (event) => {
+            event.stopPropagation();
+        
+            const res = await fetch('/api/sell', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    character_id: character.id,
+                    item_id: item.id
+                })
+            })
+
+            const result = await res.json();
+            
+            if (result.success) {
+                showToast(`Sold ${item.name} for ${formatPrice(item.price)}.`);
+                character = await refreshCharacter(character);
+                refreshInventory(character);
+            } else {
+                showToast(result.message);
+            }
+        });
 
         div.appendChild(itemName);
         div.appendChild(itemQuantity);
@@ -85,6 +107,42 @@ function renderInventory(items) {
         inventory.appendChild(div);
 
     })
+};
+
+
+// REFRESH INVENTORY (called after an inventory item is sold)
+async function refreshInventory(character) {
+    inventory.innerHTML = '';
+
+    const res = await fetch(`/api/inventory?character_id=${character.id}`);
+    const items = await res.json();
+
+    renderInventory(character, items);
+};
+
+// REFRESH CHARACTER (called after an inventory item is sold, to get new money total)
+async function refreshCharacter(character) {
+    const res = await fetch(`/api/characters?character_id=${character.id}`);
+    const data = await res.json();
+
+    const updatedCharacter = data[0];
+
+    fillCharacterDetails(updatedCharacter);
+
+    return updatedCharacter;
+};
+
+
+// TOAST NOTIFICATION
+const toast = document.querySelector('.toast');
+
+function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add('visible');
+
+    setTimeout(() => {
+        toast.classList.remove('visible');
+    }, 3000);
 };
 
 
@@ -120,4 +178,4 @@ function formatPrice(price) {
     if (cp > 0) parts.push(`${cp} cp`);
 
     return parts.join(' ');
-}
+};
